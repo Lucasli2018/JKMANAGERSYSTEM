@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import cn.itcast.jk.controller.BaseController;
-import cn.itcast.jk.domain.ContractProduct;
 import cn.itcast.jk.domain.ExtCproduct;
 import cn.itcast.jk.service.ExtCproductService;
 import cn.itcast.jk.service.FactoryService;

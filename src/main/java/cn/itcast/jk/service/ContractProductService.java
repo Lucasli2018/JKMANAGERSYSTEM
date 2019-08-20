@@ -18,5 +18,6 @@ public interface ContractProductService {
 	public void update(ContractProduct contractProduct);
 	public void delete(Serializable id);
 	public void delete(Serializable[] ids);
+	public List<ContractProduct> findForExport(Serializable contractId);
 }
 

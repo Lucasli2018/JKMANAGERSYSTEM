@@ -18,6 +18,13 @@ public class ExtCproduct {
 		this.extCproductId = extCproductId;
 	}
 	private String productNo;
+	private String productImage;
+	public String getProductImage() {
+		return productImage;
+	}
+	public void setProductImage(String productImage) {
+		this.productImage = productImage;
+	}
 	private String productDesc;
 	private Integer cnumber;
 	private String packingUnit;

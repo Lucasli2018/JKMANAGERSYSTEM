@@ -20,10 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import cn.itcast.jk.service.ContractService;
+import cn.itcast.jk.service.OutProductService;
 import cn.itcast.jk.vo.OutProduct;
 import cn.itcast.util.DownloadUtil;
-import cn.itcast.util.UtilFuns;
 
 /**
  * @Description:
@@ -34,7 +33,7 @@ import cn.itcast.util.UtilFuns;
 @Controller
 public class OutProductController {
 	@Autowired
-	ContractService contractService;
+	OutProductService outProductService;
 	
 	//转向出货表页面
 	@RequestMapping("/cargo/outproduct/toedit.action")
@@ -50,9 +49,9 @@ public class OutProductController {
 		 * 1、获取数据
 		 * 2、POI写数据到文件
 		 */
-		List<OutProduct> oList = contractService.findOutProduct(inputDate+"%");
+		List<OutProduct> oList = outProductService.findOutProduct(inputDate+"%");
 		
-		Workbook wb = new HSSFWorkbook(new FileInputStream(new File("c:\\txOutProduct.xls")));				//打开模板文件
+		Workbook wb = new HSSFWorkbook(new FileInputStream(new File("c:\\tFACTORY.xls")));				//打开模板文件
 		Sheet sheet = wb.getSheetAt(0);						//打开第一个工作表
 		Row nRow = null;
 		Cell nCell = null;
@@ -127,7 +126,7 @@ public class OutProductController {
 			nCell = nRow.createCell(colNo++);
 			nCell.setCellValue("附件");
 
-			List<String> extNameList = contractService.getExtName(op.getContractProductId());
+			List<String> extNameList = outProductService.getExtName(op.getContractProductId());
 			String _extName = "";
 			if(extNameList!=null&&extNameList.size()>0){
 				for(String extName : extNameList){

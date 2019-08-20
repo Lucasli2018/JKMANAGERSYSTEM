@@ -12,7 +12,6 @@ import cn.itcast.jk.dao.ContractProductDao;
 import cn.itcast.jk.dao.ExtCproductDao;
 import cn.itcast.jk.domain.Contract;
 import cn.itcast.jk.service.ContractService;
-import cn.itcast.jk.vo.OutProduct;
 
 /**
  * @Description:
@@ -69,12 +68,4 @@ public class ContractServiceImpl implements ContractService {
 	public void changeState(Map<String, Object> map) {
 		contractDao.changeState(map);
 	}
-
-	public List<OutProduct> findOutProduct(Serializable inputDate) {
-		return contractDao.outProduct(inputDate);
-	}
-
-	public List<String> getExtName(String contractProductId) {
-		return contractDao.getExtName(contractProductId);
-	}	
 }

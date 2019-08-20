@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import cn.itcast.jk.controller.BaseController;
 import cn.itcast.jk.domain.Contract;
+import cn.itcast.jk.print.ContractPrint;
 import cn.itcast.jk.service.ContractService;
 
 /**
@@ -101,5 +105,15 @@ public class ContractController extends BaseController {
 		map.put("ids", ids);
 		
 		contractService.changeState(map);
-	}	
+	}
+	
+	//打印
+	@RequestMapping("/cargo/contract/print.action")
+	public void print(String id, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		ContractPrint cp = new ContractPrint();
+		cn.itcast.jk.vo.Contract contract = contractService.view(id);
+		String path = request.getSession().getServletContext().getRealPath("/");
+		cp.print(contract, path, response);
+	}
+
 }

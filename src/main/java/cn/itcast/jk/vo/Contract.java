@@ -2,7 +2,7 @@ package cn.itcast.jk.vo;
 
 import java.util.List;
 
-import cn.itcast.jk.domain.ContractProduct;
+import cn.itcast.jk.vo.ContractProduct;
 
 /**
  * @Description:

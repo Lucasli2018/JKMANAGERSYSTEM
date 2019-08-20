@@ -3,7 +3,6 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.itcast.jk.mapper.ContractMapper">
-	
 	<!-- 映射对象 -->
 	<resultMap type="cn.itcast.jk.domain.Contract" id="contractRM">
 		<id property="id" column="CONTRACT_ID"/>
@@ -55,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="remark" column="REMARK"/>
 	
 		<!-- 货物信息 -->
-		<collection property="contractProducts" ofType="cn.itcast.jk.vo.ContractProduct">
+		<collection property="contractProducts" javaType="ArrayList" ofType="cn.itcast.jk.vo.ContractProduct">
 			<id property="contractProductId" column="CONTRACT_PRODUCT_ID"/>
 			<result property="productNo" column="PRODUCT_NO"/>
 			<result property="productImage" column="PRODUCT_IMAGE"/>
@@ -66,12 +65,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<result property="amount" column="AMOUNT"/>			
 			
 			<!-- 货物厂家 -->
-			<association property="factory" javaType="cn.itcast.jk.domain.Factory">
+			<association property="factory" javaType="cn.itcast.jk.domain.Factory" >
 				<result property="factoryName" column="FACTORY_NAME"/>
+				<result property="contractor" column="CONTRACTOR"/>
+				<result property="phone" column="PHONE"/>
 			</association>
 			
 			<!-- 附件信息 -->
-			<collection property="extCproducts" ofType="cn.itcast.jk.vo.ExtCproduct">
+			<collection property="extCproducts" javaType="ArrayList" ofType="cn.itcast.jk.vo.ExtCproduct">
 				<id property="extCproductId" column="EXT_CPRODUCT_ID"/>
 				<result property="productNo" column="EXT_PRODUCT_NO"/>
 				<result property="productImage" column="EXT_PRODUCT_IMAGE"/>
@@ -84,22 +85,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				<!-- 货物厂家 -->
 				<association property="factory" javaType="cn.itcast.jk.domain.Factory">
 					<result property="factoryName" column="EXT_FACTORY_NAME"/>
-				</association>				
+					<result property="contractor" column="EXT_CONTRACTOR"/>
+					<result property="phone" column="EXT_PHONE"/>
+				</association>			
 			</collection>
 		</collection>
-	</resultMap>
-	
-	<!-- 出货表 -->
-	<resultMap type="cn.itcast.jk.vo.OutProduct" id="outProductRM">
-		<id property="contractProductId" column="CONTRACT_PRODUCT_ID"/>
-		<result property="customName" column="CUSTOM_NAME"/>
-		<result property="contractNo" column="CONTRACT_NO"/>
-		<result property="deliveryPeriod" column="DELIVERY_PERIOD"/>
-		<result property="shipTime" column="SHIP_TIME"/>
-		<result property="tradeTerms" column="TRADE_TERMS"/>
-		<result property="factoryName" column="FACTORY_NAME"/>
-		<result property="productNo" column="PRODUCT_NO"/>
-		<result property="cnumber" column="CNUMBER"/>
 	</resultMap>
 	
 	<!-- 列表 -->
@@ -119,14 +109,21 @@ cpnum,
 epnum,
 c.*
  FROM contract_c c
+
+where 1=1
+<if test="state!=null">
+	and c.state=#{state}
+</if>
 	</select>
 	
 	<!-- 查看 -->
 	<select id="view" parameterType="string" resultMap="contractViewRM">
 SELECT
 	c.*,
-	t.contract_product_id,t.factory_name,t.product_no,t.product_desc,t.cnumber,t.packing_unit,t.price,t.amount,
-	t.ext_cproduct_id,t.ext_factory_name,t.ext_product_no,t.ext_product_desc,t.ext_cnumber,t.ext_packing_unit,t.ext_price,t.ext_amount
+	t.contract_product_id,t.product_no,t.product_image,t.product_desc,t.cnumber,t.packing_unit,t.price,t.amount,
+	t.factory_name,t.contractor,t.phone,
+	t.ext_cproduct_id,t.ext_product_no,t.ext_product_image,t.ext_product_desc,t.ext_cnumber,t.ext_packing_unit,t.ext_price,t.ext_amount,
+	t.ext_factory_name,t.ext_contractor,t.ext_phone
 
 FROM
 
@@ -135,34 +132,39 @@ LEFT JOIN
 (
 	SELECT
 		cp.contract_id,
-		cp.contract_product_id,cp.factory_name,cp.product_no,cp.product_desc,cp.cnumber,cp.packing_unit,cp.price,cp.amount,
-		ep.ext_cproduct_id,ep.factory_name AS ext_factory_name,ep.product_no AS ext_product_no,ep.product_desc as ext_product_desc,ep.cnumber as ext_cnumber,ep.packing_unit as ext_packing_unit,ep.price as ext_price,ep.amount as ext_amount
+		cp.contract_product_id,cp.product_no,cp.product_image,cp.product_desc,cp.cnumber,cp.packing_unit,cp.price,cp.amount,
+		cp.factory_name,cp.contractor,cp.phone,
+		ep.ext_cproduct_id,ep.product_no AS ext_product_no,ep.product_image as ext_product_image,ep.product_desc as ext_product_desc,ep.cnumber as ext_cnumber,ep.packing_unit as ext_packing_unit,ep.price as ext_price,ep.amount as ext_amount,
+		ep.factory_name AS ext_factory_name,ep.contractor as ext_contractor,ep.phone as ext_phone
 	FROM
 	(
 		SELECT 
-			cp.contract_product_id,cp.contract_id,f.factory_name,cp.product_no,
-			cp.product_desc,cp.cnumber,cp.packing_unit,cp.price,cp.amount
+			cp.contract_product_id,cp.contract_id,cp.product_no,
+			f.factory_name,f.contractor,f.phone,
+			cp.product_image,cp.product_desc,cp.cnumber,cp.packing_unit,cp.price,cp.amount
 		FROM
-		(SELECT contract_product_id,contract_id,factory_id,product_no, product_desc,cnumber,packing_unit, price,amount FROM contract_product_c) cp
-		LEFT JOIN 
-		(SELECT factory_id,factory_name FROM factory_c) f
+		(SELECT contract_product_id,contract_id,factory_id,product_no, product_image, product_desc,cnumber,packing_unit, price,amount FROM contract_product_c) cp
+		LEFT JOIN
+		(SELECT factory_id,factory_name,contractor,phone FROM factory_c) f
 		ON cp.factory_id = f.factory_id
 	) cp
 	LEFT JOIN
 	(
 		SELECT 
-			ep.ext_cproduct_id,ep.contract_product_id,f.factory_name,ep.product_no,
-			ep.product_desc,ep.cnumber,ep.packing_unit,ep.price,ep.amount
+			ep.ext_cproduct_id,ep.contract_product_id,ep.product_no,
+			f.factory_name,f.contractor,f.phone,
+			ep.product_image,ep.product_desc,ep.cnumber,ep.packing_unit,ep.price,ep.amount
 		FROM
-		(SELECT ext_cproduct_id,contract_product_id,factory_id,product_no, product_desc,cnumber,packing_unit, price,amount FROM ext_cproduct_c) ep
+		(SELECT ext_cproduct_id,contract_product_id,factory_id,product_no, product_image, product_desc,cnumber,packing_unit, price,amount FROM ext_cproduct_c) ep
 		LEFT JOIN
-		(SELECT factory_id,factory_name FROM factory_c) f
+		(SELECT factory_id,factory_name,contractor,phone FROM factory_c) f
 		ON ep.factory_id=f.factory_id
 	) ep
 	ON cp.contract_product_id=ep.contract_product_id
 ) t	
 ON c.contract_id=t.contract_id	
 WHERE c.contract_id=#{id}
+order by t.factory_name
 	</select>	
 	
 	<!-- 查询一条 -->
@@ -222,57 +224,5 @@ WHERE c.contract_id=#{id}
 			#{id}
 		</foreach>
 	</update>	
-	
-	<!-- 出货表 -->
-	<select id="findOutProduct" parameterType="string" resultMap="outProductRM">
-SELECT
-	t.contract_product_id,
-	c.custom_name,c.contract_no,SUBSTRING(c.delivery_period,1,10) AS delivery_period,SUBSTRING(c.ship_time,1,10) AS ship_time,c.trade_terms,
-	t.factory_name,t.product_no,t.cnumber
-FROM
-(
-	SELECT contract_id,custom_name,contract_no,delivery_period,ship_time,trade_terms FROM contract_c
-) c
-LEFT JOIN
-(
-	SELECT
-		cp.contract_product_id,
-		cp.contract_id,
-		f.factory_name,
-		cp.product_no,cp.cnumber
-	FROM
-	(
-		SELECT 
-		contract_product_id,
-		contract_id,factory_id,
-		product_no,CONCAT(cnumber,packing_unit) AS cnumber
-		FROM contract_product_c
-	) cp
-	LEFT JOIN
-	(
-		SELECT factory_id,factory_name FROM factory_c
-	) f
-	ON cp.factory_id=f.factory_id
-) t
-ON c.contract_id=t.contract_id	
-
-WHERE c.ship_time LIKE #{inputDate}
-	</select>
-	
-	<!-- 出货表附件名称的获取	0104附件分类 -->
-	<select id="getExtName" parameterType="string" resultType="string">
-SELECT
-	s.name
-FROM
-(
-SELECT ctype FROM ext_cproduct_c
-WHERE contract_product_id = #{id}
-) e
-LEFT JOIN
-(
-SELECT order_no,NAME FROM sys_code_b WHERE parent_id='0104'
-) s
-ON e.ctype=s.order_no	
-	</select>
 	
 </mapper>

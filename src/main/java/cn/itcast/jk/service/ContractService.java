@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import cn.itcast.jk.domain.Contract;
-import cn.itcast.jk.vo.OutProduct;
 
 /**
  * @Description:
@@ -23,7 +22,5 @@ public interface ContractService {
 	public void delete(Serializable[] ids);
 	
 	public void changeState(Map<String,Object> map);
-	public List<OutProduct> findOutProduct(Serializable inputDate);
-	public List<String> getExtName(String contractProductId);
 }
 

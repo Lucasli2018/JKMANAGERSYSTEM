@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.jk.mapper.ExportMapper">
+	<resultMap type="cn.itcast.jk.domain.Export" id="exportRM">
+		<id property="id" column="EXPORT_ID"/>
+		
+		<result property="contractIds" column="CONTRACT_IDS"/>
+		<result property="customerContract" column="CUSTOMER_CONTRACT"/>
+		
+		<result property="lcNo" column="LCNO"/>
+		<result property="shipmentPort" column="SHIPMENT_PORT"/>
+		<result property="consignee" column="CONSIGNEE"/>
+		<result property="transportMode" column="TRANSPORT_MODE"/>
+		<result property="priceCondition" column="PRICE_CONDITION"/>
+		<result property="inputDate" column="INPUT_DATE"/>
+		<result property="state" column="STATE"/>
+	</resultMap>
+	
+	<select id="find" parameterType="cn.itcast.jk.domain.Export" resultMap="exportRM">
+		select * from export_c
+		where 1=1
+	</select>
+	
+	<select id="get" parameterType="string" resultMap="exportRM">
+		selecct * from export_c
+		where export_id=#{id}
+	</select>
+	
+	<insert id="insert" parameterType="cn.itcast.jk.domain.Export">
+		insert into export_c
+		(
+			EXPORT_ID,CONTRACT_IDS,CUSTOMER_CONTRACT,LCNO,SHIPMENT_PORT,CONSIGNEE,TRANSPORT_MODE,PRICE_CONDITION,INPUT_DATE,STATE
+		)
+		values
+		(
+			#{id},#{contractIds},#{customerContract},#{lcNo},#{shipmentPort},#{consignee},#{transportMode},#{priceCondition},#{inputDate},#{state}
+		)
+	</insert>
+	
+	
+</mapper>

@@ -4,26 +4,14 @@ package cn.itcast.jk.domain;
  * @Description:
  * @Author:	nutony
  * @Company:	http://java.itcast.cn
- * @CreateDate:	2014-3-16
+ * @CreateDate:	2014-3-20
  */
-public class ContractProduct {
-	private String contractId;			//外键	如果Hibernate不是这样的，使用mybatis就这样写，由于SQL
-	private String factoryId;			//外键
-	private String factoryName;			//为了列表显示中文名称
-	
-	public String getFactoryName() {
-		return factoryName;
-	}
-	public void setFactoryName(String factoryName) {
-		this.factoryName = factoryName;
-	}
-	public String getFactoryId() {
-		return factoryId;
-	}
-	public void setFactoryId(String factoryId) {
-		this.factoryId = factoryId;
-	}
+public class ExportProduct {
 	private String id;
+	private String exportId;			//外键
+	private String factoryId;			//外键
+	private String factoryName;			//冗余字段，为了报运获取数据更加快捷
+	
 	private String productImage;
 	private String productNo;
 	private String productDesc;
@@ -32,24 +20,17 @@ public class ContractProduct {
 	private Integer boxNum;
 	private Double price;
 	private Double amount;
-	
-	public Integer getBoxNum() {
-		return boxNum;
-	}
-	public void setBoxNum(Integer boxNum) {
-		this.boxNum = boxNum;
-	}
-	public String getContractId() {
-		return contractId;
-	}
-	public void setContractId(String contractId) {
-		this.contractId = contractId;
-	}
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getFactoryId() {
+		return factoryId;
+	}
+	public void setFactoryId(String factoryId) {
+		this.factoryId = factoryId;
 	}
 	public String getProductImage() {
 		return productImage;
@@ -81,6 +62,12 @@ public class ContractProduct {
 	public void setPackingUnit(String packingUnit) {
 		this.packingUnit = packingUnit;
 	}
+	public Integer getBoxNum() {
+		return boxNum;
+	}
+	public void setBoxNum(Integer boxNum) {
+		this.boxNum = boxNum;
+	}
 	public Double getPrice() {
 		return price;
 	}
@@ -92,5 +79,17 @@ public class ContractProduct {
 	}
 	public void setAmount(Double amount) {
 		this.amount = amount;
+	}
+	public String getFactoryName() {
+		return factoryName;
+	}
+	public void setFactoryName(String factoryName) {
+		this.factoryName = factoryName;
+	}
+	public String getExportId() {
+		return exportId;
+	}
+	public void setExportId(String exportId) {
+		this.exportId = exportId;
 	}
 }

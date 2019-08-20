@@ -6,10 +6,10 @@ package cn.itcast.jk.domain;
  * @Company:	http://java.itcast.cn
  * @CreateDate:	2014-3-16
  */
-public class ContractProduct {
-	private String contractId;			//外键	如果Hibernate不是这样的，使用mybatis就这样写，由于SQL
-	private String factoryId;			//外键
-	private String factoryName;			//为了列表显示中文名称
+public class ExtEproduct {
+	private String exportProductId;			//外键	如果Hibernate不是这样的，使用mybatis就这样写，由于SQL
+	private String factoryId;					//外键
+	private String factoryName;					//为了列表显示中文名称
 	
 	public String getFactoryName() {
 		return factoryName;
@@ -29,21 +29,15 @@ public class ContractProduct {
 	private String productDesc;
 	private Integer cnumber;
 	private String packingUnit;
-	private Integer boxNum;
 	private Double price;
 	private Double amount;
 	
-	public Integer getBoxNum() {
-		return boxNum;
+
+	public String getExportProductId() {
+		return exportProductId;
 	}
-	public void setBoxNum(Integer boxNum) {
-		this.boxNum = boxNum;
-	}
-	public String getContractId() {
-		return contractId;
-	}
-	public void setContractId(String contractId) {
-		this.contractId = contractId;
+	public void setExportProductId(String exportProductId) {
+		this.exportProductId = exportProductId;
 	}
 	public String getId() {
 		return id;

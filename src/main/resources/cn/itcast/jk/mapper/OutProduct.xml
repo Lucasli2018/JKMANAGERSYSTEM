@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.jk.mapper.OutProductMapper">
+	<resultMap type="cn.itcast.jk.vo.OutProduct" id="outProductRM">
+		<id property="contractProductId" column="CONTRACT_PRODUCT_ID"/>
+		<result property="customName" column="CUSTOM_NAME"/>
+		<result property="contractNo" column="CONTRACT_NO"/>
+		<result property="deliveryPeriod" column="DELIVERY_PERIOD"/>
+		<result property="shipTime" column="SHIP_TIME"/>
+		<result property="tradeTerms" column="TRADE_TERMS"/>
+		<result property="factoryName" column="FACTORY_NAME"/>
+		<result property="productNo" column="PRODUCT_NO"/>
+		<result property="cnumber" column="CNUMBER"/>
+	</resultMap>
+	
+	<!-- 日期截取，数据库substring函数 -->
+	<select id="findOutProduct" parameterType="string" resultMap="outProductRM">
+SELECT
+	t.contract_product_id,
+	c.custom_name,c.contract_no,SUBSTRING(c.delivery_period,1,10) AS delivery_period,SUBSTRING(c.ship_time,1,10) AS ship_time,c.trade_terms,
+	t.factory_name,t.product_no,t.cnumber
+FROM
+(
+	SELECT contract_id,custom_name,contract_no,delivery_period,ship_time,trade_terms FROM contract_c
+) c
+LEFT JOIN
+(
+	SELECT
+		cp.contract_product_id,
+		cp.contract_id,
+		f.factory_name,
+		cp.product_no,cp.cnumber
+	FROM
+	(
+		SELECT 
+		contract_product_id,
+		contract_id,factory_id,
+		product_no,CONCAT(cnumber,packing_unit) AS cnumber
+		FROM contract_product_c
+	) cp
+	LEFT JOIN
+	(
+		SELECT factory_id,factory_name FROM factory_c
+	) f
+	ON cp.factory_id=f.factory_id
+) t
+ON c.contract_id=t.contract_id	
+
+WHERE c.ship_time LIKE #{inputDate}
+	</select>
+	
+	<!-- 出货表附件名称的获取	0104附件分类，结果返回一个字符串数组 -->
+	<select id="getExtName" parameterType="string" resultType="string">
+SELECT
+	s.name
+FROM
+(
+SELECT ctype FROM ext_cproduct_c
+WHERE contract_product_id = #{id}
+) e
+LEFT JOIN
+(
+SELECT order_no,NAME FROM sys_code_b WHERE parent_id='0104'
+) s
+ON e.ctype=s.order_no	
+	</select>
+	
+</mapper>
