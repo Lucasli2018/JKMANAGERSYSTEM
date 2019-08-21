@@ -20,17 +20,38 @@ public class ExportProduct {
 	private Integer boxNum;
 	private Double price;
 	private Double amount;
+	
+	private Double grossWeight;
+	private Double netWeight;
+	private Double sizeLength;
+	private Double sizeWidth;
+	private Double sizeHeight;
+	private Double csize;
+	private Double exPrice;
+	private Double tax;
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
+	public String getExportId() {
+		return exportId;
+	}
+	public void setExportId(String exportId) {
+		this.exportId = exportId;
+	}
 	public String getFactoryId() {
 		return factoryId;
 	}
 	public void setFactoryId(String factoryId) {
 		this.factoryId = factoryId;
+	}
+	public String getFactoryName() {
+		return factoryName;
+	}
+	public void setFactoryName(String factoryName) {
+		this.factoryName = factoryName;
 	}
 	public String getProductImage() {
 		return productImage;
@@ -80,16 +101,53 @@ public class ExportProduct {
 	public void setAmount(Double amount) {
 		this.amount = amount;
 	}
-	public String getFactoryName() {
-		return factoryName;
+
+	public Double getGrossWeight() {
+		return grossWeight;
 	}
-	public void setFactoryName(String factoryName) {
-		this.factoryName = factoryName;
+	public void setGrossWeight(Double grossWeight) {
+		this.grossWeight = grossWeight;
 	}
-	public String getExportId() {
-		return exportId;
+	public Double getNetWeight() {
+		return netWeight;
 	}
-	public void setExportId(String exportId) {
-		this.exportId = exportId;
+	public void setNetWeight(Double netWeight) {
+		this.netWeight = netWeight;
+	}
+	public Double getSizeLength() {
+		return sizeLength;
+	}
+	public void setSizeLength(Double sizeLength) {
+		this.sizeLength = sizeLength;
+	}
+	public Double getSizeWidth() {
+		return sizeWidth;
+	}
+	public void setSizeWidth(Double sizeWidth) {
+		this.sizeWidth = sizeWidth;
+	}
+	public Double getSizeHeight() {
+		return sizeHeight;
+	}
+	public void setSizeHeight(Double sizeHeight) {
+		this.sizeHeight = sizeHeight;
+	}
+	public Double getCsize() {
+		return csize;
+	}
+	public void setCsize(Double csize) {
+		this.csize = csize;
+	}
+	public Double getExPrice() {
+		return exPrice;
+	}
+	public void setExPrice(Double exPrice) {
+		this.exPrice = exPrice;
+	}
+	public Double getTax() {
+		return tax;
+	}
+	public void setTax(Double tax) {
+		this.tax = tax;
 	}
 }

@@ -18,7 +18,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="boxNum" column="BOX_NUM"/>
 		<result property="price" column="PRICE"/>
 		<result property="amount" column="AMOUNT"/>
+		
+		<result property="grossWeight" column="GROSS_WEIGHT"/>
+		<result property="netWeight" column="NET_WEIGHT"/>
+		<result property="sizeLength" column="SIZE_LENGTH"/>
+		<result property="sizeWidth" column="SIZE_WIDTH"/>
+		<result property="sizeHeight" column="SIZE_HEIGHT"/>
+		<result property="exPrice" column="EX_PRICE"/>
+		<result property="tax" column="TAX"/>
 	</resultMap>	
+	
+	<!-- 某个报运下的货物信息 -->
+	<select id="findByExportId" parameterType="string" resultMap="exportProductRM">
+		SELECT * FROM export_product_c WHERE export_id=#{exportId}
+	</select>
+	
+	<select id="get" parameterType="string" resultMap="exportProductRM">
+		SELECT * FROM export_product_c WHERE export_product_id=#{id}
+	</select>
 	
 	<!-- 从表新增，含带主表ID -->
 	<insert id="insert" parameterType="cn.itcast.jk.domain.ExportProduct">
@@ -28,19 +45,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		(#{id},#{exportId},#{factoryId},#{factoryName},#{productImage},#{productNo},#{productDesc},#{cnumber},#{packingUnit},#{boxNum},#{price},#{amount})
 	</insert>
 	
-	<!-- 从表的修改 -->
-	<update id="update" parameterType="cn.itcast.jk.domain.ContractProduct">
-		update contract_product_c
+	<!--  修改 -->
+	<update id="update" parameterType="cn.itcast.jk.domain.ExportProduct">
+		update export_product_c
 		<set>
 			<if test="factoryId!=null"> FACTORY_ID=#{factoryId}, </if>
+			<if test="factoryName!=null"> FACTORY_NAME=#{factoryName}, </if>
+			
+			<if test="productImage!=null"> PRODUCT_IMAGE=#{productImage}, </if>
 			<if test="productNo!=null"> PRODUCT_NO=#{productNo}, </if>
 			<if test="productDesc!=null"> PRODUCT_DESC=#{productDesc}, </if>
-			<if test="packingUnit!=null"> PACKING_UNIT=#{packingUnit}, </if>
 			<if test="cnumber!=null"> CNUMBER=#{cnumber}, </if>
+			<if test="packingUnit!=null"> PACKING_UNIT=#{packingUnit}, </if>
+			<if test="boxNum!=null"> BOX_NUM=#{boxNum}, </if>
 			<if test="price!=null"> PRICE=#{price}, </if>
 			<if test="amount!=null"> AMOUNT=#{amount}, </if>
+			
+			<if test="grossWeight!=null"> GROSS_WEIGHT=#{grossWeight}, </if>
+			<if test="netWeight!=null"> NET_WEIGHT=#{netWeight}, </if>
+			<if test="sizeLength!=null"> SIZE_LENGTH=#{sizeLength}, </if>
+			<if test="sizeWidth!=null"> SIZE_WIDTH=#{sizeWidth}, </if>
+			<if test="sizeHeight!=null"> SIZE_HEIGHT=#{sizeHeight}, </if>
+			<if test="exPrice!=null"> EX_PRICE=#{exPrice}, </if>
+			<if test="tax!=null"> TAX=#{tax}, </if>
 		</set>
-		where CONTRACT_PRODUCT_ID=#{id}
+		where EXPORT_PRODUCT_ID=#{id}
 	</update>
+
+
 	
 </mapper>

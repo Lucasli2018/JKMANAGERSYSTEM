@@ -19,12 +19,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<select id="find" parameterType="cn.itcast.jk.domain.Export" resultMap="exportRM">
-		select * from export_c
-		where 1=1
+SELECT 
+(
+	SELECT COUNT(*) FROM export_product_c WHERE export_id=c.export_id
+)
+pnum,
+(
+	SELECT COUNT(*) FROM ext_eproduct_c WHERE export_product_id IN
+		(
+			SELECT export_product_id FROM export_product_c
+			WHERE export_id=c.export_id
+		)
+)
+extnum,
+c.*
+ FROM export_c c
+
+WHERE 1=1	
 	</select>
 	
 	<select id="get" parameterType="string" resultMap="exportRM">
-		selecct * from export_c
+		select * from export_c
 		where export_id=#{id}
 	</select>
 	
@@ -38,6 +53,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			#{id},#{contractIds},#{customerContract},#{lcNo},#{shipmentPort},#{consignee},#{transportMode},#{priceCondition},#{inputDate},#{state}
 		)
 	</insert>
+	
+	<!-- 修改 -->
+	<update id="update" parameterType="cn.itcast.jk.domain.Export">
+		update export_c
+		<set>
+			<if test="customerContract">CUSTOMER_CONTRACT=#{customerContract},</if>
+			<if test="inputDate">INPUT_DATE=#{inputDate},</if>
+			<if test="lcNo">LCNO=#{lcNo},</if>
+			<if test="shipmentPort!=null">SHIPMENT_PORT=#{shipmentPort},</if>
+			<if test="consignee!=null">CONSIGNEE=#{consignee},</if>
+			<if test="transportMode!=null">TRANSPORT_MODE=#{transportMode},</if>
+			<if test="priceCondition!=null">PRICE_CONDITION=#{priceCondition},</if>
+			<if test="marks!=null">MARKS=#{marks},</if>
+			<if test="remark">REMARK=#{remark},</if>
+			<if test="state">STATE=#{state},</if>
+		</set>
+		where EXPORT_ID=#{id}
+	</update>
 	
 	
 </mapper>

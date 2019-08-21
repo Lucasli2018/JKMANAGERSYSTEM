@@ -3,12 +3,15 @@ package cn.itcast.jk.controller.cargo.export;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import cn.itcast.jk.controller.BaseController;
 import cn.itcast.jk.domain.Contract;
 import cn.itcast.jk.domain.ContractProduct;
 import cn.itcast.jk.domain.Export;
@@ -21,6 +24,7 @@ import cn.itcast.jk.service.ExportProductService;
 import cn.itcast.jk.service.ExportService;
 import cn.itcast.jk.service.ExtCproductService;
 import cn.itcast.jk.service.ExtEproductService;
+import cn.itcast.util.UtilFuns;
 
 /**
  * @Description:
@@ -29,7 +33,7 @@ import cn.itcast.jk.service.ExtEproductService;
  * @CreateDate:	2014-3-20
  */
 @Controller
-public class ExportController {
+public class ExportController extends BaseController {
 	@Autowired
 	ExportService exportService;
 	@Autowired
@@ -88,6 +92,7 @@ public class ExportController {
 		}
  		export.setCustomerContract(_contractNos);
  		
+ 		export.setState(0);								//0-草稿 1-已上报 2-装箱 3-委托 4-发票 5-财务
  		exportService.insert(export);
  		
  		//3. 将合同中的货物信息进行“搬家”
@@ -124,5 +129,79 @@ public class ExportController {
 	 		}
  		}
  		return "redirect:/cargo/export/list.action";
+	}
+	
+	//转向修改页面
+	@RequestMapping("/cargo/export/toupdate.action")
+	public String toupdate(String id, Model model){
+		Export obj = exportService.get(id);
+		model.addAttribute("obj", obj);
+
+		String htmlString = exportService.getHTMLString(id);
+		model.addAttribute("mRecordData", htmlString);
+		
+		return "cargo/export/jExportUpdate.jsp";
+	}
+	
+	//修改保存
+	@RequestMapping("/cargo/export/update.action")
+	public String update(Export export, HttpServletRequest request){
+		
+		//获取批量提交的数据
+		String[] id = request.getParameterValues("mr_id");
+		String[] changed = request.getParameterValues("mr_changed");			//监测单元格值是否发生变化
+		String[] orderNo = request.getParameterValues("mr_orderNo");
+		
+		String[] cnumber = request.getParameterValues("mr_cnumber");
+		String[] grossWeight = request.getParameterValues("mr_grossWeight");
+		String[] netWeight = request.getParameterValues("mr_netWeight");
+		String[] sizeLength = request.getParameterValues("mr_sizeLength");
+		String[] sizeWidth = request.getParameterValues("mr_sizeWidth");
+		String[] sizeHeight = request.getParameterValues("mr_sizeHeight");
+		String[] exPrice = request.getParameterValues("mr_exPrice");
+		String[] tax = request.getParameterValues("mr_tax");
+		
+		//批量提交
+		ExportProduct ep;
+		
+		for(int i=0;i<orderNo.length;i++){
+			if(UtilFuns.isEmpty(changed[i])){
+				continue;									//跳过未修改的记录，优化
+			}
+			if(UtilFuns.isEmpty(id[i])){
+				ep = new ExportProduct();
+			}else{
+				ep = exportProductService.get(id[i]);
+			}
+			if(UtilFuns.isNotEmpty(cnumber[i])){
+				ep.setCnumber(Integer.parseInt(cnumber[i]));
+			}
+			if(UtilFuns.isNotEmpty(grossWeight[i])){
+				ep.setGrossWeight(Double.parseDouble(grossWeight[i]));
+			}
+			if(UtilFuns.isNotEmpty(netWeight[i])){
+				ep.setNetWeight(Double.parseDouble(netWeight[i]));
+			}
+			if(UtilFuns.isNotEmpty(sizeLength[i])){
+				ep.setSizeLength(Double.parseDouble(sizeLength[i]));
+			}
+			if(UtilFuns.isNotEmpty(sizeWidth[i])){
+				ep.setSizeWidth(Double.parseDouble(sizeWidth[i]));
+			}
+			if(UtilFuns.isNotEmpty(sizeHeight[i])){
+				ep.setSizeHeight(Double.parseDouble(sizeHeight[i]));
+			}
+			if(UtilFuns.isNotEmpty(exPrice[i])){
+				ep.setExPrice(Double.parseDouble(exPrice[i]));
+			}
+			if(UtilFuns.isNotEmpty(tax[i])){
+				ep.setTax(Double.parseDouble(tax[i]));
+			}
+			exportProductService.update(ep);
+		}
+		
+		
+		exportService.update(export);
+		return "redirect:/cargo/export/list.action";
 	}
 }

@@ -18,5 +18,7 @@ public interface ExportService {
 	public void update(Export export);
 	public void delete(Serializable id);
 	public void delete(Serializable[] ids);
+	
+	public String getHTMLString(String exportId);
 }
 
