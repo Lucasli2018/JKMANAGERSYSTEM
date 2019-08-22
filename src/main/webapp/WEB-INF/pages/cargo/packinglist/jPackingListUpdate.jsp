@@ -8,7 +8,7 @@
 </head>
 <body>
 <form method="post">
-	<input type="text" name="id" value="${obj.id}"/>
+	<input type="hidden" name="id" value="${obj.id}"/>
 
 <div id="menubar">
 <div id="middleMenubar">

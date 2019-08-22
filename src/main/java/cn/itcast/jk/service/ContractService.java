@@ -22,5 +22,6 @@ public interface ContractService {
 	public void delete(Serializable[] ids);
 	
 	public void changeState(Map<String,Object> map);
+	public void pigeonhole(String[] contractIds);
 }
 

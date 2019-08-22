@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -33,15 +34,15 @@ public class Test3SXXFS {
 	@Test
 	public void print() throws Exception{
 		String xlsFile = "c:/poiSXXFSBigData.xlsx";
-		Workbook wb = new SXSSFWorkbook(100);
+		Workbook wb = new SXSSFWorkbook(100);				//内存中只创建100个对象，写临时文件，将内存中不用的对象就释放。
 		Sheet sheet = wb.createSheet("我的第一个工作簿");		//建立新的sheet对象
 
 		Row nRow = null;
 		Cell nCell   = null;
 		
-		for(int i=0;i<100;i++){
+		for(int i=0;i<10000;i++){
 			nRow = sheet.createRow(i);
-			for(int j=0;j<20;j++){
+			for(int j=0;j<10;j++){
 				nCell = nRow.createCell(j);
 				nCell.setCellValue("我是单元格传智播客");
 				nCell.setCellStyle(style(wb));
@@ -60,7 +61,8 @@ public class Test3SXXFS {
 	public void jdbcex(boolean isClose) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, IOException, InterruptedException {
 		String xlsFile = "c:/poiSXXFSDBBigData.xlsx";					//输出文件
 		Workbook wb = new SXSSFWorkbook(100);				//创建excel文件，内存只有100条记录【关键语句】
-		Sheet sheet = wb.createSheet("我的第一个工作簿");		//建立新的sheet对象
+		Sheet sheet = null;
+
 
 		Row nRow = null;
 		Cell nCell   = null;
@@ -68,33 +70,42 @@ public class Test3SXXFS {
 		//使用jdbc链接数据库
 		Class.forName("com.mysql.jdbc.Driver").newInstance();  
 		
-		String url = "jdbc:mysql://localhost:3306/jkmore100?characterEncoding=UTF-8";
+		String url = "jdbc:mysql://localhost:3306/jkdb?characterEncoding=UTF-8";
 		String user = "root";
 		String password = "root";
 		
 		Connection conn = DriverManager.getConnection(url, user,password);   
 		Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);   
 
-		String sql = "select name,age,des from customer limit 300";   //100万测试数据
+		String sql = "select * from hpa_normal_tissue_csv limit 30";   //100万测试数据
 		ResultSet rs = stmt.executeQuery(sql);  
+		
+		ResultSetMetaData rsmd = rs.getMetaData();
+
 		
 		
 		long  startTime = System.currentTimeMillis();	//开始时间
 		System.out.println("strat execute time: " + startTime);
 		//context
-		int rowNo = 0;
-		int colNo = 0;
+		int rowNo = 0;								//总行号
+		int pageRowNo = 0;							//页行号
 		while(rs.next()) {
-			colNo = 0;
-			nRow = sheet.createRow(rowNo++);
+			//打印100条后切换到下个工作表
+			if(rowNo%10==0){
+				System.out.println("Current Sheet:" + rowNo/10);
+				sheet = wb.createSheet("我的第"+(rowNo/10)+"个工作簿");		//建立新的sheet对象
+				sheet = wb.getSheetAt(rowNo/10);							//动态指定当前的工作表
+				pageRowNo = 0;
+			}			
+			rowNo++;
+			nRow = sheet.createRow(pageRowNo++);
 
-			nCell = nRow.createCell(colNo++);
-			nCell.setCellValue(rs.getString(colNo));
+			for(int j=0;j<rsmd.getColumnCount();j++){
+				nCell = nRow.createCell(j);
+				nCell.setCellValue(rs.getString(j+1));
+			}
 			
-			nCell = nRow.createCell(colNo++);
-			nCell.setCellValue(rs.getString(colNo));
-			
-			if(rowNo%100==0){
+			if(rowNo%10==0){
 				System.out.println("row no: " + rowNo);
 			}
 			

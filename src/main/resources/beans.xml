@@ -38,6 +38,15 @@
 		<property name="mapperLocations" value="classpath:cn/itcast/jk/mapper/*.xml"/>
 	</bean>
 	
+	<!-- 整合jdbcTemplate -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="sqlDao" class="cn.itcast.common.springdao.SqlDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+	
 	<!-- 事务管理 -->	
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"/>

@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -16,16 +14,15 @@ import cn.itcast.util.UtilFuns;
  * 执行sql语句类
  * 调用方法：
  * 引入配置问题 
- * SQLDAO sqlDao = (SQLDAO)AppContext.getInstance().getAppContext().getBean("sqlDao");
  * 
  */
-public class SQLDAO {
-	private static Logger log = Logger.getLogger(SQLDAO.class);
+public class SqlDao {
+	private static Logger log = Logger.getLogger(SqlDao.class);
 	private UtilFuns utilFuns = new UtilFuns();
+	
     private JdbcTemplate jdbcTemplate;
-    
-	public void setDataSource(DataSource ds){
-		jdbcTemplate = new JdbcTemplate(ds);
+	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	public int findInt(String sql){
