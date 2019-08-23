@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.itcast.common.springdao.SqlDao;
 import cn.itcast.jk.dao.ContractDao;
 import cn.itcast.jk.dao.ContractProductDao;
 import cn.itcast.jk.dao.ExtCproductDao;
@@ -27,6 +28,9 @@ public class ContractServiceImpl implements ContractService {
 	ContractProductDao contractProductDao;
 	@Autowired
 	ContractDao contractDao;
+	
+	@Autowired
+	SqlDao sqlDao;	
 	
 	public List<Contract> find(Contract contract) {
 		return contractDao.find(contract);
@@ -67,5 +71,21 @@ public class ContractServiceImpl implements ContractService {
 
 	public void changeState(Map<String, Object> map) {
 		contractDao.changeState(map);
+	}
+
+	public void pigeonhole(String[] contractIds) {
+		StringBuffer sBuf = new StringBuffer();
+		for(String id : contractIds){
+			sBuf.append("insert into contract_his_c select * from contract_c where contract_id='" + id + "';");
+			sBuf.append("insert into contract_product_his_c select * from contract_product_c where contract_id='" + id + "';");
+			sBuf.append("insert into ext_cproduct_his_c select * from ext_cproduct_c where contract_product_id in (select contract_product_id from contract_product_c where contract_id='" + id + "');");
+			
+			sBuf.append("delete from ext_cproduct_c where contract_product_id in (select contract_product_id from contract_product_c where contract_id='" + id + "');");
+			sBuf.append("delete from contract_product_c where contract_id='" + id + "';");
+			sBuf.append("delete from contract_c where contract_id='" + id + "';");
+			
+		}
+		
+		sqlDao.batchSQL(sBuf.toString().split(";"));
 	}
 }

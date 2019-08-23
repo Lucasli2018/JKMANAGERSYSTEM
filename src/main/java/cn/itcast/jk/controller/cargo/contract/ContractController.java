@@ -116,4 +116,12 @@ public class ContractController extends BaseController {
 		cp.print(contract, path, response);
 	}
 
+	//归档
+	@RequestMapping("/cargo/contract/pigeonhole.action")
+	public String pigeonhole(String id){
+		String[] contractIds = id.split(",");
+		contractService.pigeonhole(contractIds);
+		
+		return "redirect:/cargo/contract/list.action";
+	}
 }
